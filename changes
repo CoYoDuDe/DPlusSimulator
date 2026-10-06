@@ -1,1 +1,9 @@
+v1.1
+- Tatsächlichen Relaiszustand zurücklesen, abgelehnte Schaltbefehle erneut versuchen und eigene D-Bus-Verbindung beim Umkonfigurieren schließen.
+- SetupHelper 9.4: Patch-Werkzeug auch vor UNINSTALL initialisieren.
+- Leere Relaiszuordnung bleibt ohne Ausgang; kein stiller Rueckfall auf Relais 5.
+- Neuinstallationen beginnen deaktiviert und ohne Relaiszuordnung. Bestehende Einstellungen bleiben erhalten.
+- GUI zeigt Relaisnummerierung ab 1 und kennzeichnet den GPIO-Platzhalter als Simulation.
+- Installation und Deinstallation mit SetupHelper, GuiMods und SSHTunnel auf Venus3.81 getestet; BMV-Starterspannungsquelle erkannt. Hardware-Schalttest steht noch aus.
+
 -

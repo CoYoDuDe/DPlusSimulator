@@ -114,7 +114,7 @@ MbPage {
 			description: qsTr("Ausgangsmodus")
 			bind: root.settingsPath("/OutputMode")
 			possibleValues: [
-				MbOption { description: qsTr("GPIO-Pin"); value: "gpio" },
+				MbOption { description: qsTr("GPIO (nur Simulation)"); value: "gpio" },
 				MbOption { description: qsTr("Relay"); value: "relay" }
 			]
 			writeAccessLevel: User.AccessInstaller
@@ -145,7 +145,7 @@ MbPage {
 		}
 
 		MbEditBox {
-			description: qsTr("Relay-Kanal (0-5)")
+			description: qsTr("Relay-Kanal (ab 1, leer = keiner)")
 			item.bind: root.settingsPath("/RelayChannel")
 			maximumLength: 40
 			overwriteMode: false

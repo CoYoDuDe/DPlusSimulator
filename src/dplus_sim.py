@@ -135,7 +135,7 @@ DEFAULT_OFF_VOLTAGE = DEFAULT_TARGET_VOLTAGE - DEFAULT_HYSTERESIS / 2.0
 DEFAULT_ON_DELAY_SECONDS = DEFAULT_ACTIVATION_DELAY_SECONDS
 DEFAULT_OFF_DELAY_SECONDS = DEFAULT_DEACTIVATION_DELAY_SECONDS
 DEFAULT_OUTPUT_MODE = "relay"
-DEFAULT_RELAY_CHANNEL = "5"
+DEFAULT_RELAY_CHANNEL = ""
 DEFAULT_RELAY_TARGET = "system"
 DEFAULT_VOLTAGE_SOURCE_MODE = "auto"
 DEFAULT_STATUS_PUBLISH_INTERVAL = 2.0
@@ -231,7 +231,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     "enabled": {
         "path": "/Settings/Devices/DPlusSim/Enabled",
         "type": "b",
-        "default": True,
+        "default": False,
         "description": "Aktiviert oder deaktiviert den D+-Simulator.",
         "min": 0,
         "max": 1,
@@ -1879,6 +1879,7 @@ class RelayController:
         self._bus_choice = bus_choice or "system"
         self._channel = self._normalize_channel(channel)
         self._state = False
+        self._state_known = False
         self._lock = threading.Lock()
         self._enabled = enabled and dbus is not None
         self._item: Optional[Any] = None
@@ -1950,18 +1951,34 @@ class RelayController:
 
     def write(self, state: bool) -> None:
         state_bool = bool(state)
-        if state_bool == self._state:
+        if not self._enabled:
+            self._state = state_bool
             return
-        self._state = state_bool
-        self._sync_state(state_bool, force=True)
+        if not self._channel or not self._service:
+            self._state = False
+            return
+        self.read()
+        if self._state_known and state_bool == self._state:
+            return
+        if self._sync_state(state_bool, force=True):
+            self.read()
 
     def read(self) -> bool:
-        return self._state
-        if value is not None:
+        if not self._enabled or not self._channel or not self._service:
+            return self._state
+        with self._lock:
             try:
+                iface = self._ensure_item_locked()
+                if iface is None:
+                    self._state_known = False
+                    return self._state
+                value = iface.GetValue()
                 self._state = bool(int(value))
-            except (TypeError, ValueError):
-                self._state = bool(value)
+                self._state_known = True
+            except Exception as exc:
+                self._state_known = False
+                self._logger.warning("Relay-Zustand nicht lesbar: %s", exc)
+                self._reset_locked()
         return self._state
 
     def close(self) -> None:
@@ -1973,6 +1990,7 @@ class RelayController:
             self._reset_locked()
 
     def _reset_locked(self) -> None:
+        self._state_known = False
         if self._item is not None:
             self._item = None
         if self._bus_item_iface is not None:
@@ -1984,17 +2002,19 @@ class RelayController:
                     close()
             self._bus = None
 
-    def _sync_state(self, state: bool, *, force: bool) -> None:
+    def _sync_state(self, state: bool, *, force: bool) -> bool:
         if not self._enabled or not self._channel:
-            return
+            return False
         with self._lock:
             last_exc: Optional[Exception] = None
             for attempt in range(2):
                 iface = self._ensure_item_locked()
                 if iface is None:
-                    return
+                    return False
                 try:
                     result = iface.SetValue(dbus.Int32(1 if state else 0))
+                    if int(result) != 0:
+                        raise RuntimeError("Relay SetValue rejected with code %s" % result)
                     self._logger.info(
                         "Relay-Write %s -> %s%s returned %s",
                         int(state),
@@ -2002,7 +2022,7 @@ class RelayController:
                         f"/Relay/{self._channel}/State",
                         result,
                     )
-                    return
+                    return True
                 except Exception as exc:  # pragma: no-cover - Laufzeitabhängig
                     last_exc = exc
                     if attempt == 0 and self._is_disconnected_error(exc):
@@ -2014,7 +2034,7 @@ class RelayController:
                         continue
                     break
             if last_exc is None:
-                return
+                return False
             if force:
                 self._logger.warning(
                     "Setzen des Relay-Zustands auf '%s' für %s ist fehlgeschlagen: %s",
@@ -2029,6 +2049,7 @@ class RelayController:
                     self.description,
                     last_exc,
                 )
+            return False
 
     def _ensure_item_locked(self) -> Optional[Any]:
         if not self._enabled or not self._channel or not self._service:
@@ -2036,7 +2057,9 @@ class RelayController:
         if self._bus_item_iface is not None:
             return self._bus_item_iface
         assert dbus is not None
-        bus = dbus.SystemBus() if self._bus_choice == "system" else dbus.SessionBus()
+        # This connection is closed on reconfiguration; never close the shared
+        # SettingsDevice connection from the GLib thread.
+        bus = dbus.SystemBus(private=True) if self._bus_choice == "system" else dbus.SessionBus(private=True)
         path = f"/Relay/{self._channel}/State"
         try:
             obj = bus.get_object(self._service, path)
@@ -2707,9 +2730,8 @@ class DPlusController:
         if target_mode == "relay":
             relay_service = self._resolve_relay_service()
             channel = "0" if self._relay_target == "bmv" else str(self._settings.get("relay_channel") or "").strip()
-            if not channel:
-                channel = DEFAULT_RELAY_CHANNEL
-                self._settings["relay_channel"] = channel
+            # An explicitly empty channel means no assigned output. Do not
+            # silently claim the default relay while the user configures it.
             self._relay.set_bus_choice(self._settings.get("dbus_bus", "system"))
             self._relay.set_service(relay_service)
             self._relay.reconfigure(channel)

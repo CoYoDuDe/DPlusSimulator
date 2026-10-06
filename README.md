@@ -63,3 +63,7 @@ Dieses Projekt wird unabhängig und privat entwickelt und kostenlos bereitgestel
 - [Weitere Projekte und Informationen](https://dnsmith.net/)
 
 Unterstützung ist freiwillig. Es gibt keinen Abo-Zwang und daraus entsteht kein Anspruch auf bestimmte Funktionen oder persönlichen Support.
+
+## Inbetriebnahme ab v1.1
+
+Neue Installationen starten deaktiviert und ohne zugewiesenes Relais. Zuerst die Starterspannungsquelle und das tatsaechlich verdrahtete Relais pruefen, danach aktivieren. Relaisnummern beginnen bei 1; leer bedeutet kein Ausgang. Vorhandene Einstellungen werden beim Update erhalten. Der GPIO-Modus ist derzeit nur eine interne Simulation und schaltet keinen physischen GPIO.

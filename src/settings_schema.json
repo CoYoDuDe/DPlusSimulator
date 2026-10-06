@@ -59,13 +59,13 @@
         "relay"
       ],
       "description": "Legt fest, ob der Simulator einen GPIO oder ein Relay schaltet.",
-      "default": "gpio"
+      "default": "relay"
     },
     "relay_channel": {
       "type": "string",
       "minLength": 0,
-      "description": "Relay-Kanal. Unterstützt einfache Kanalnummern wie 0-5 sowie kompatible Alias-/Pfadformen.",
-      "default": "4brelays/0"
+      "description": "Relay-Kanal ab 1; leer bedeutet kein Ausgang. 0 bleibt als Alias fuer das erste Relay kompatibel.",
+      "default": ""
     },
     "relay_target": {
       "type": "string",
