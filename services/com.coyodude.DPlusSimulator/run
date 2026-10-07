@@ -19,4 +19,4 @@ do
     fi
 done
 
-exec python3 /data/DPlus_Simulator/src/dplus_sim.py "$@"
+exec python3 /data/DPlusSimulator/src/DPlusSimulator.py "$@"

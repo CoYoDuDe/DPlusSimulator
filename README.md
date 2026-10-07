@@ -1,14 +1,14 @@
-# DPlus Simulator
+# DPlusSimulator
 
-D+ Simulator ist ein SetupHelper-Paket fuer Venus OS. Es installiert einen Dienst zur Simulation eines D+-Signals und bindet eine Einstellungsseite ins alte Venus-GUI-v1 ein.
+DPlusSimulator ist ein SetupHelper-Paket fuer Venus OS. Es installiert einen Dienst zur Simulation eines D+-Signals und bindet eine Einstellungsseite ins alte Venus-GUI-v1 ein.
 
 ## Voraussetzungen
 
 - [SetupHelper](https://github.com/kwindrem/SetupHelper) von [kwindrem](https://github.com/kwindrem) aktuell installiert
 
-# DPlus Simulator
+# DPlusSimulator
 
-D+ Simulator ist ein SetupHelper-Paket für Venus OS.  
+DPlusSimulator ist ein SetupHelper-Paket für Venus OS.  
 Es simuliert ein D+-Signal abhängig von der Batteriespannung.
 
 ## Voraussetzungen
@@ -19,6 +19,17 @@ Es simuliert ein D+-Signal abhängig von der Batteriespannung.
 ## Installation
 
 Repository im SetupHelper als Custom-Paket eintragen und über den PackageManager installieren.
+
+Paketname: `DPlusSimulator`, GitHub-Benutzer: `CoYoDuDe`, Branch: `main`.
+Ab v1.2 lauten Paketordner `/data/DPlusSimulator`, Optionenordner
+`/data/setupOptions/DPlusSimulator`, Dienst `com.coyodude.DPlusSimulator` und
+Einstellungsprefix `/Settings/Devices/DPlusSimulator`. Der Installer uebernimmt
+alte Einstellungen einmalig, entfernt die alte Installation mit SetupHelper
+und bewahrt das Altpaket unter dem neuen Optionenordner als Migration-Backup.
+Bereits vorhandene Einstellungen am neuen Prefix werden nicht ueberschrieben.
+Das Paket muss unter seinem neuen Namen installiert werden; doppelte alte/neue
+Eintraege werden vor der Migration abgewiesen. Aktualisierung und Deinstallation
+laufen danach ausschliesslich unter `DPlusSimulator`.
 
 ## Zündplus (optional)
 

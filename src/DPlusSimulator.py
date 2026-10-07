@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""DPlus-Simulator Dienst.
+"""DPlusSimulator Dienst.
 
 Dieses Skript implementiert einen D-Bus-Dienst, der das Verhalten einer D+-Leitung
 simuliert. Der Dienst bildet eine Hysterese mit einstellbaren Verzögerungen ab und
@@ -143,7 +143,7 @@ RELAY_FUNCTION_TAG = "manual"
 RELAY_FUNCTION_NEUTRAL = "manual"
 
 
-DEV_FEATURE_FLAG_ENV_VAR = "DPLUS_SIM_DEV_MODE"
+DEV_FEATURE_FLAG_ENV_VAR = "DPLUSSIMULATOR_DEV_MODE"
 _TRUE_ENV_VALUES: Set[str] = {"1", "true", "yes", "on"}
 
 
@@ -229,7 +229,7 @@ def normalize_bool(value: Any) -> bool:
 
 SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     "enabled": {
-        "path": "/Settings/Devices/DPlusSim/Enabled",
+        "path": "/Settings/Devices/DPlusSimulator/Enabled",
         "type": "b",
         "default": False,
         "description": "Aktiviert oder deaktiviert den D+-Simulator.",
@@ -237,7 +237,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 1,
     },
     "gpio_pin": {
-        "path": "/Settings/Devices/DPlusSim/GpioPin",
+        "path": "/Settings/Devices/DPlusSimulator/GpioPin",
         "type": "i",
         "default": DEFAULT_GPIO_PIN,
         "description": "GPIO-Pin, der die simulierte D+-Leitung schaltet.",
@@ -245,7 +245,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0,
     },
     "on_voltage": {
-        "path": "/Settings/Devices/DPlusSim/OnVoltage",
+        "path": "/Settings/Devices/DPlusSimulator/OnVoltage",
         "type": "d",
         "default": DEFAULT_ON_VOLTAGE,
         "description": "Spannung, ab der die D+-Simulation aktiviert werden soll.",
@@ -253,7 +253,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0.0,
     },
     "off_voltage": {
-        "path": "/Settings/Devices/DPlusSim/OffVoltage",
+        "path": "/Settings/Devices/DPlusSimulator/OffVoltage",
         "type": "d",
         "default": DEFAULT_OFF_VOLTAGE,
         "description": "Spannung, unter der die D+-Simulation deaktiviert wird.",
@@ -261,7 +261,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0.0,
     },
     "on_delay_seconds": {
-        "path": "/Settings/Devices/DPlusSim/OnDelaySec",
+        "path": "/Settings/Devices/DPlusSimulator/OnDelaySec",
         "type": "d",
         "default": DEFAULT_ON_DELAY_SECONDS,
         "description": "Verzögerung in Sekunden bis zum Einschalten, sobald alle Bedingungen erfüllt sind.",
@@ -269,7 +269,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0.0,
     },
     "off_delay_seconds": {
-        "path": "/Settings/Devices/DPlusSim/OffDelaySec",
+        "path": "/Settings/Devices/DPlusSimulator/OffDelaySec",
         "type": "d",
         "default": DEFAULT_OFF_DELAY_SECONDS,
         "description": "Verzögerung in Sekunden bis zum Ausschalten, wenn die Bedingungen entfallen.",
@@ -277,7 +277,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0.0,
     },
     "manual_override": {
-        "path": "/Settings/Devices/DPlusSim/ManualOverride",
+        "path": "/Settings/Devices/DPlusSimulator/ManualOverride",
         "type": "b",
         "default": False,
         "description": "Aktiviert die manuelle Übersteuerung des Ausgangs.",
@@ -285,7 +285,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 1,
     },
     "manual_state": {
-        "path": "/Settings/Devices/DPlusSim/ManualState",
+        "path": "/Settings/Devices/DPlusSimulator/ManualState",
         "type": "b",
         "default": False,
         "description": "Gewünschter Ausgangszustand bei manueller Übersteuerung.",
@@ -293,7 +293,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 1,
     },
     "force_on": {
-        "path": "/Settings/Devices/DPlusSim/ForceOn",
+        "path": "/Settings/Devices/DPlusSimulator/ForceOn",
         "type": "b",
         "default": False,
         "description": "Kompatibilitätsalias für manuelles Einschalten aus älteren UI-Versionen.",
@@ -301,7 +301,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 1,
     },
     "force_off": {
-        "path": "/Settings/Devices/DPlusSim/ForceOff",
+        "path": "/Settings/Devices/DPlusSimulator/ForceOff",
         "type": "b",
         "default": False,
         "description": "Kompatibilitätsalias für manuelles Ausschalten aus älteren UI-Versionen.",
@@ -309,7 +309,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 1,
     },
     "output_state": {
-        "path": "/Settings/Devices/DPlusSim/OutputState",
+        "path": "/Settings/Devices/DPlusSimulator/OutputState",
         "type": "b",
         "default": False,
         "description": "Aktueller Ausgangszustand des Simulators.",
@@ -317,7 +317,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 1,
     },
     "output_mode": {
-        "path": "/Settings/Devices/DPlusSim/OutputMode",
+        "path": "/Settings/Devices/DPlusSimulator/OutputMode",
         "type": "s",
         "default": DEFAULT_OUTPUT_MODE,
         "description": "Steuerungsmodus für den D+-Ausgang (gpio oder relay).",
@@ -325,7 +325,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0,
     },
     "voltage_source_mode": {
-        "path": "/Settings/Devices/DPlusSim/VoltageSourceMode",
+        "path": "/Settings/Devices/DPlusSimulator/VoltageSourceMode",
         "type": "s",
         "default": DEFAULT_VOLTAGE_SOURCE_MODE,
         "description": "Auswahl der Spannungsquelle (auto oder manual).",
@@ -333,7 +333,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0,
     },
     "relay_channel": {
-        "path": "/Settings/Devices/DPlusSim/RelayChannel",
+        "path": "/Settings/Devices/DPlusSimulator/RelayChannel",
         "type": "s",
         "default": DEFAULT_RELAY_CHANNEL,
         "description": "Ausgewählter Relay-Kanal aus der gpiosetup-Konfiguration.",
@@ -341,7 +341,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0,
     },
     "relay_target": {
-        "path": "/Settings/Devices/DPlusSim/RelayTarget",
+        "path": "/Settings/Devices/DPlusSimulator/RelayTarget",
         "type": "s",
         "default": DEFAULT_RELAY_TARGET,
         "description": "Wählt zwischen System-Relay und BMV-Relay.",
@@ -349,7 +349,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0,
     },
     "dbus_bus": {
-        "path": "/Settings/Devices/DPlusSim/DbusBus",
+        "path": "/Settings/Devices/DPlusSimulator/DbusBus",
         "type": "s",
         "default": "system",
         "description": "Zu verwendender D-Bus (system oder session).",
@@ -357,7 +357,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0,
     },
     "service_path": {
-        "path": "/Settings/Devices/DPlusSim/ServicePath",
+        "path": "/Settings/Devices/DPlusSimulator/ServicePath",
         "type": "s",
         "default": "com.victronenergy.system",
         "description": (
@@ -368,7 +368,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0,
     },
     "voltage_path": {
-        "path": "/Settings/Devices/DPlusSim/VoltagePath",
+        "path": "/Settings/Devices/DPlusSimulator/VoltagePath",
         "type": "s",
         "default": "/StarterVoltage",
         "description": (
@@ -379,7 +379,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0,
     },
     "use_ignition": {
-        "path": "/Settings/Devices/DPlusSim/UseIgnition",
+        "path": "/Settings/Devices/DPlusSimulator/UseIgnition",
         "type": "b",
         "default": False,
         "description": "Aktiviert die optionale Zündplus-Logik über vorhandene D-Bus-Digitaleingänge.",
@@ -387,7 +387,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 1,
     },
     "emergency_off_voltage": {
-        "path": "/Settings/Devices/DPlusSim/EmergencyOffVoltage",
+        "path": "/Settings/Devices/DPlusSimulator/EmergencyOffVoltage",
         "type": "d",
         "default": 11.8,
         "description": "Sicherheitsabschaltung bei extremer Unterspannung trotz aktiver Zündung.",
@@ -395,7 +395,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0.0,
     },
     "emergency_off_delay_seconds": {
-        "path": "/Settings/Devices/DPlusSim/EmergencyOffDelaySec",
+        "path": "/Settings/Devices/DPlusSimulator/EmergencyOffDelaySec",
         "type": "d",
         "default": 2.0,
         "description": "Verzögerung der Sicherheitsabschaltung bei extremer Unterspannung.",
@@ -403,7 +403,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 0.0,
     },
     "ignition_state": {
-        "path": "/Settings/Devices/DPlusSim/IgnitionState",
+        "path": "/Settings/Devices/DPlusSimulator/IgnitionState",
         "type": "b",
         "default": False,
         "description": "Aktuell erkannter Zündstatus des automatischen D-Bus-Eingangs.",
@@ -411,7 +411,7 @@ SETTINGS_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "max": 1,
     },
     "relay_function_backups": {
-        "path": "/Settings/Devices/DPlusSim/RelayFunctionBackups",
+        "path": "/Settings/Devices/DPlusSimulator/RelayFunctionBackups",
         "type": "s",
         "default": "{}",
         "description": (
@@ -2293,7 +2293,7 @@ class SimulatorStatus:
         }
 
 
-class DPlusController:
+class DPlusSimulatorController:
     def __init__(self, settings: Dict[str, Any], use_gpio: bool = True) -> None:
         self._logger = logging.getLogger(self.__class__.__name__)
         self._settings = DEFAULT_SETTINGS.copy()
@@ -2864,7 +2864,7 @@ class DPlusController:
             self._running = True
             self._status.running = True
             self._loop_task = asyncio.create_task(self._run_loop())
-            self._logger.info("DPlusController wurde gestartet")
+            self._logger.info("DPlusSimulatorController wurde gestartet")
             await self._notify_status_locked()
 
     async def stop(self) -> None:
@@ -2899,7 +2899,7 @@ class DPlusController:
         async with self._lock:
             if self._loop_task is loop_task:
                 self._loop_task = None
-        self._logger.info("DPlusController wurde gestoppt")
+        self._logger.info("DPlusSimulatorController wurde gestoppt")
 
     async def update_settings(self, new_settings: Dict[str, Any]) -> Dict[str, Any]:
         release_required = False
@@ -3309,17 +3309,17 @@ class DPlusController:
             await result
 
 
-class DPlusSimService(ServiceInterface):
+class DPlusSimulatorService(ServiceInterface):
     def __init__(
         self,
-        controller: DPlusController,
+        controller: DPlusSimulatorController,
         shutdown_callback: Callable[[], None],
         settings_persist: Optional[Callable[[Dict[str, Any]], Awaitable[None]]] = None,
         *,
         debug_enabled: bool = False,
         voltage_constraints: Optional[Dict[str, str]] = None,
     ) -> None:
-        super().__init__("com.coyodude.dplussim")
+        super().__init__("com.coyodude.DPlusSimulator")
         self._controller = controller
         self._shutdown_callback = shutdown_callback
         self._persist_settings = settings_persist
@@ -3357,7 +3357,7 @@ class DPlusSimService(ServiceInterface):
                 continue
             actual = str(value).strip()
             if actual != expected:
-                logging.getLogger("DPlusSimService").error(
+                logging.getLogger("DPlusSimulatorService").error(
                     "Einstellung %s darf nicht auf %s geändert werden (erwartet %s)",
                     key,
                     actual,
@@ -3383,7 +3383,7 @@ class DPlusSimService(ServiceInterface):
     @method()
     async def InjectVoltageSample(self, voltage: "d") -> "a{sv}":  # type: ignore[override]
         if not self._debug_enabled:
-            logging.getLogger("DPlusSimService").error(
+            logging.getLogger("DPlusSimulatorService").error(
                 "InjectVoltageSample wurde ohne Debug-Modus angefordert"
             )
             raise RuntimeError(
@@ -3391,7 +3391,7 @@ class DPlusSimService(ServiceInterface):
                 "Starten Sie den Dienst mit --enable-debug."
             )
         if not development_features_enabled():
-            logging.getLogger("DPlusSimService").error(
+            logging.getLogger("DPlusSimulatorService").error(
                 "InjectVoltageSample wurde ohne gesetzte %s-Umgebungsvariable blockiert",
                 DEV_FEATURE_FLAG_ENV_VAR,
             )
@@ -3440,7 +3440,7 @@ def resolve_bus_configuration(bus_value: Any) -> Tuple[str, Optional[Any]]:
     if not normalized:
         normalized = fallback_bus
     if normalized not in ("system", "session"):
-        logging.getLogger("DPlusSim").warning(
+        logging.getLogger("DPlusSimulator").warning(
             "Unbekannter D-Bus-Typ '%s', verwende '%s'", normalized, fallback_bus
         )
         normalized = fallback_bus
@@ -3470,7 +3470,7 @@ async def run_async(args: argparse.Namespace) -> None:
 
     def request_shutdown() -> None:
         if not shutdown_event.is_set():
-            logging.getLogger("DPlusSim").info("Beende Dienst nach Shutdown-Anforderung")
+            logging.getLogger("DPlusSimulator").info("Beende Dienst nach Shutdown-Anforderung")
             shutdown_event.set()
 
     install_signal_handlers(loop, request_shutdown)
@@ -3481,7 +3481,7 @@ async def run_async(args: argparse.Namespace) -> None:
     merged_settings["dbus_bus"] = selected_bus
 
     if not args.no_dbus:
-        logger = logging.getLogger("DPlusSim")
+        logger = logging.getLogger("DPlusSimulator")
         if _ADDED_VELIB_PYTHON_PATHS:
             logger.info(
                 "Zusätzliche velib_python-Pfade aktiv: %s",
@@ -3559,7 +3559,7 @@ async def run_async(args: argparse.Namespace) -> None:
     resolved_voltage_source: Optional[VoltageServiceInfo] = None
     voltage_constraints: Dict[str, str] = {}
 
-    controller = DPlusController(merged_settings, use_gpio=not args.dry_run)
+    controller = DPlusSimulatorController(merged_settings, use_gpio=not args.dry_run)
     relay_function_monitor: Optional[RelayFunctionMonitor] = None
     startup_failed = shutdown_event.is_set()
 
@@ -3606,7 +3606,7 @@ async def run_async(args: argparse.Namespace) -> None:
             or Message is None
         ):
             reason = "D-Bus-Unterstützung nicht verfügbar – der Dienst wird beendet"
-            logging.getLogger("DPlusSim").error(reason)
+            logging.getLogger("DPlusSimulator").error(reason)
             await mark_voltage_failure(reason)
             if fail_hard:
                 request_shutdown()
@@ -3624,7 +3624,7 @@ async def run_async(args: argparse.Namespace) -> None:
             object_path = str(merged_settings.get("voltage_path", "")).strip()
             if not service_name or not object_path:
                 reason = "Manuelle Spannungsquelle ist nicht vollständig konfiguriert"
-                logging.getLogger("DPlusSim").error(reason)
+                logging.getLogger("DPlusSimulator").error(reason)
                 await mark_voltage_failure(
                     reason,
                     state="not-configured",
@@ -3646,7 +3646,7 @@ async def run_async(args: argparse.Namespace) -> None:
                 resolved_voltage_source = await resolve_starter_voltage_service(bus_choice)
             except VoltageServiceDiscoveryError as exc:
                 reason = f"Starterspannung konnte nicht gefunden werden: {exc}"
-                logging.getLogger("DPlusSim").error(reason)
+                logging.getLogger("DPlusSimulator").error(reason)
                 await mark_voltage_failure(
                     reason,
                     state="not-found",
@@ -3667,7 +3667,7 @@ async def run_async(args: argparse.Namespace) -> None:
                 try:
                     await settings_backend.apply(voltage_constraints)
                 except Exception as exc:
-                    logging.getLogger("DPlusSim").warning(
+                    logging.getLogger("DPlusSimulator").warning(
                         "Automatische Übernahme der Starterspannungs-Einstellungen fehlgeschlagen: %s",
                         exc,
                     )
@@ -3681,7 +3681,7 @@ async def run_async(args: argparse.Namespace) -> None:
             await voltage_reader.initialize()
         except VoltageSourceError as exc:
             reason = f"Initiale Verbindung zur Spannungsquelle fehlgeschlagen: {exc}"
-            logging.getLogger("DPlusSim").error(reason)
+            logging.getLogger("DPlusSimulator").error(reason)
             await mark_voltage_failure(
                 reason,
                 state="error",
@@ -3713,7 +3713,7 @@ async def run_async(args: argparse.Namespace) -> None:
                 "product_name": resolved_voltage_source.product_name,
             },
         )
-        logging.getLogger("DPlusSim").info(
+        logging.getLogger("DPlusSimulator").info(
             "Externe Spannungsquelle aktiviert: %s",
             voltage_reader.description,
         )
@@ -3766,7 +3766,7 @@ async def run_async(args: argparse.Namespace) -> None:
                     "available": False,
                 },
             )
-            logging.getLogger("DPlusSim").warning("Zündplus aktiv, aber keine DigitalInput-Quelle gefunden: %s", exc)
+            logging.getLogger("DPlusSimulator").warning("Zündplus aktiv, aber keine DigitalInput-Quelle gefunden: %s", exc)
             return False
 
         ignition_reader = DbusBinaryInputReader(
@@ -3787,7 +3787,7 @@ async def run_async(args: argparse.Namespace) -> None:
                     "available": False,
                 },
             )
-            logging.getLogger("DPlusSim").warning("Initialisierung der Zündquelle fehlgeschlagen: %s", exc)
+            logging.getLogger("DPlusSimulator").warning("Initialisierung der Zündquelle fehlgeschlagen: %s", exc)
             ignition_reader = None
             return False
 
@@ -3800,7 +3800,7 @@ async def run_async(args: argparse.Namespace) -> None:
                 "available": False,
             },
         )
-        logging.getLogger("DPlusSim").info("Zündquelle aktiviert: %s", ignition_reader.description)
+        logging.getLogger("DPlusSimulator").info("Zündquelle aktiviert: %s", ignition_reader.description)
         return True
 
     if not startup_failed:
@@ -3868,14 +3868,14 @@ async def run_async(args: argparse.Namespace) -> None:
                 )
             normalized_value = str(value).strip()
             if expected is None:
-                logging.getLogger("DPlusSim").warning(
+                logging.getLogger("DPlusSimulator").warning(
                     "Keine automatische Starterspannungs-Erkennung aktiv – ignorierte Änderung %s=%s",
                     key,
                     normalized_value,
                 )
                 return
             if normalized_value != expected:
-                logging.getLogger("DPlusSim").error(
+                logging.getLogger("DPlusSimulator").error(
                     "Einstellung %s kann nicht auf %s geändert werden – verwendet wird %s",
                     key,
                     normalized_value,
@@ -3931,7 +3931,7 @@ async def run_async(args: argparse.Namespace) -> None:
         )
         poll_bus: Optional[MessageBus] = None
         last_seen: Dict[str, Any] = {}
-        logger = logging.getLogger("DPlusSimSettingsPoll")
+        logger = logging.getLogger("DPlusSimulatorSettingsPoll")
         try:
             if BusType is None or MessageBus is None or Message is None:
                 return
@@ -3970,7 +3970,7 @@ async def run_async(args: argparse.Namespace) -> None:
                         await wait_for_disconnect()
 
     bus: Optional[MessageBus] = None
-    service: Optional[DPlusSimService] = None
+    service: Optional[DPlusSimulatorService] = None
     if not shutdown_event.is_set() and BusType is not None and not args.no_dbus:
         try:
             bus_type = (
@@ -3979,7 +3979,7 @@ async def run_async(args: argparse.Namespace) -> None:
                 else BusType.SESSION
             )
             bus = await MessageBus(bus_type=bus_type).connect()
-            service = DPlusSimService(
+            service = DPlusSimulatorService(
                 controller,
                 request_shutdown,
                 persist_settings,
@@ -3987,11 +3987,11 @@ async def run_async(args: argparse.Namespace) -> None:
                 voltage_constraints=voltage_constraints,
             )
             controller.set_status_callback(service.emit_status)
-            bus.export("/com/coyodude/dplussim", service)
-            await bus.request_name("com.coyodude.dplussim")
-            logging.getLogger("DPlusSim").info("D-Bus-Dienst erfolgreich registriert")
+            bus.export("/com/coyodude/DPlusSimulator", service)
+            await bus.request_name("com.coyodude.DPlusSimulator")
+            logging.getLogger("DPlusSimulator").info("D-Bus-Dienst erfolgreich registriert")
         except Exception as exc:  # pragma: no-cover - Laufzeitabhängig
-            logging.getLogger("DPlusSim").warning(
+            logging.getLogger("DPlusSimulator").warning(
                 "D-Bus konnte nicht initialisiert werden (%s). Wechsel in lokalen Modus.",
                 exc,
             )
@@ -4030,7 +4030,7 @@ async def run_async(args: argparse.Namespace) -> None:
     try:
         await shutdown_event.wait()
     except Exception:
-        logging.getLogger("DPlusSim").exception("Unerwarteter Fehler – Shutdown wird erzwungen")
+        logging.getLogger("DPlusSimulator").exception("Unerwarteter Fehler – Shutdown wird erzwungen")
         request_shutdown()
         raise
     finally:
@@ -4110,7 +4110,7 @@ async def run_async(args: argparse.Namespace) -> None:
                             await wait_for_disconnect()
 
 
-async def simulate_waveform(controller: DPlusController, amplitude: float) -> None:
+async def simulate_waveform(controller: DPlusSimulatorController, amplitude: float) -> None:
     logger = logging.getLogger("Waveform")
     start_time = time.monotonic()
     while True:
@@ -4122,7 +4122,7 @@ async def simulate_waveform(controller: DPlusController, amplitude: float) -> No
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="DPlus Simulator Dienst")
+    parser = argparse.ArgumentParser(description="DPlusSimulator Dienst")
     parser.add_argument("--bus", choices=("system", "session"), help="Zu verwendender D-Bus", default=None)
     parser.add_argument("--dry-run", action="store_true", help="GPIO-Befehle nicht an Hardware weiterreichen")
     parser.add_argument(
@@ -4145,7 +4145,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--log-level",
-        default=os.getenv("DPLUS_SIM_LOG", "INFO"),
+        default=os.getenv("DPLUSSIMULATOR_LOG", "INFO"),
         help="Logging-Level (z. B. DEBUG, INFO)",
     )
     return parser
@@ -4164,7 +4164,7 @@ def validate_runtime_options(args: argparse.Namespace, parser: argparse.Argument
                 f"{DEV_FEATURE_FLAG_ENV_VAR}=1"
             )
     if debug_enabled and not development_enabled:
-        logging.getLogger("DPlusSim").warning(
+        logging.getLogger("DPlusSimulator").warning(
             "--enable-debug wurde ohne gesetztes %s verwendet. "
             "Manuelle Spannungsinjektionen bleiben deaktiviert.",
             DEV_FEATURE_FLAG_ENV_VAR,
@@ -4179,9 +4179,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     try:
         asyncio.run(run_async(args))
     except KeyboardInterrupt:
-        logging.getLogger("DPlusSim").info("Beendet durch Benutzer")
+        logging.getLogger("DPlusSimulator").info("Beendet durch Benutzer")
     except RuntimeError as exc:
-        logging.getLogger("DPlusSim").error("Fehler beim Start: %s", exc)
+        logging.getLogger("DPlusSimulator").error("Fehler beim Start: %s", exc)
         return 1
     return 0
 

@@ -4,9 +4,9 @@ import com.victron.velib 1.0
 
 MbPage {
 	id: root
-	title: qsTr("D+ Simulator")
+	title: qsTr("DPlusSimulator")
 
-	property string settingsPrefix: "com.victronenergy.settings/Settings/Devices/DPlusSim"
+	property string settingsPrefix: "com.victronenergy.settings/Settings/Devices/DPlusSimulator"
 	property VBusItem relayTargetItem: VBusItem { bind: settingsPath("/RelayTarget") }
 	property VBusItem manualOverrideItem: VBusItem { bind: settingsPath("/ManualOverride") }
 	property VBusItem outputModeItem: VBusItem { bind: settingsPath("/OutputMode") }
@@ -77,7 +77,7 @@ MbPage {
 
 	model: VisibleItemModel {
 		MbSwitch {
-			name: qsTr("D+ Simulator aktiv")
+			name: qsTr("DPlusSimulator aktiv")
 			bind: root.settingsPath("/Enabled")
 			valueTrue: 1
 			valueFalse: 0

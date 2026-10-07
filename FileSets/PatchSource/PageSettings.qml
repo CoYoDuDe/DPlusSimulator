@@ -149,9 +149,9 @@ MbPage {
 			show: hasRelay0
 		}
 
-		////// added for D+ simulator package
+		////// added for DPlusSimulator package
 		MbSubMenu {
-			description: qsTr("D+ simulator")
+			description: qsTr("DPlusSimulator")
 			subpage: Component { PageSettingsDPlusSimulator {} }
 		}
 

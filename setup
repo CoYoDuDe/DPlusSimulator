@@ -1,6 +1,6 @@
 #!/bin/bash
 
-standardPromptAndActions='yes'
+standardPromptAndActions='no'
 
 # SetupHelper 9.4 selects its patch tool only for INSTALL/CHECK. UNINSTALL
 # still needs it to reverse our menu patch without removing other addons.
@@ -14,3 +14,44 @@ else
 fi
 
 source "/data/SetupHelper/HelperResources/IncludeHelpers"
+
+if [ "$scriptAction" = 'NONE' ]; then
+    standardActionPrompt
+fi
+
+if [ "$scriptAction" = 'INSTALL' ]; then
+    if [ "$packageName" != 'DPlusSimulator' ]; then
+        logMessage 'Install this package as DPlusSimulator; the installer migrates earlier package names'
+        exit 245
+    fi
+    if ! python3 "$scriptDir/src/migrate_legacy.py" prepare; then
+        logMessage 'DPlusSimulator migration failed; existing settings are retained'
+        exit 245
+    fi
+    addAllDbusSettings
+    if ! python3 "$scriptDir/src/migrate_legacy.py" apply; then
+        logMessage 'DPlusSimulator settings migration failed; refusing to start the service'
+        exit 245
+    fi
+    if [ -f "$setupOptionsDir/optionsSet" ]; then
+        optionsSet=true
+    fi
+fi
+if [ "$scriptAction" = 'INSTALL' ] || [ "$scriptAction" = 'UNINSTALL' ]; then
+    finalizeMigration () {
+        local migrationExit=$?
+        if [ "$migrationExit" = 0 ] || [ "$migrationExit" = 124 ]; then
+            if [ "$scriptAction" = 'INSTALL' ]; then
+            if ! python3 "$scriptDir/src/migrate_legacy.py" finalize; then
+                logMessage 'DPlusSimulator installed, but legacy settings cleanup failed'
+                exit 245
+            fi
+            elif ! python3 "$scriptDir/src/migrate_legacy.py" clean-menu; then
+                logMessage 'DPlusSimulator legacy menu cleanup failed'
+                exit 245
+            fi
+        fi
+    }
+    trap finalizeMigration EXIT
+fi
+endScript 'INSTALL_FILES' 'INSTALL_SERVICES' 'ADD_DBUS_SETTINGS'

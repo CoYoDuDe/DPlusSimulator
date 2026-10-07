@@ -1,3 +1,7 @@
+v1.2
+- Paket, Ordner, GUI, Dienst und Einstellungspfade einheitlich DPlusSimulator.
+- Einmalige Migration bestehender Einstellungen und SetupHelper-Registrierung mit gesicherter Altpaket-Kopie.
+
 v1.1
 - Tatsächlichen Relaiszustand zurücklesen, abgelehnte Schaltbefehle erneut versuchen und eigene D-Bus-Verbindung beim Umkonfigurieren schließen.
 - SetupHelper 9.4: Patch-Werkzeug auch vor UNINSTALL initialisieren.
